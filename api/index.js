@@ -22,4 +22,12 @@ app.use('/api/events', eventRoutes); // TAMBAHKAN INI
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server SapuLidi berjalan di http://localhost:${PORT}`);
+  const authRoutes = require('./src/routes/authRoutes');
+const eventRoutes = require('./src/routes/eventRoutes');
+const attendanceRoutes = require('./src/routes/attendanceRoutes'); // TAMBAHKAN INI
+
+// ... (kode sebelumnya)
+app.use('/api/auth', authRoutes);
+app.use('/api/events', eventRoutes);
+app.use('/api/attendance', attendanceRoutes); // TAMBAHKAN INI
 });
