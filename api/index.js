@@ -3,8 +3,8 @@ const express = require('express');
 const cors = require('cors');
 const { PrismaClient } = require('@prisma/client');
 
-// Import Route
 const authRoutes = require('./src/routes/authRoutes');
+const eventRoutes = require('./src/routes/eventRoutes'); // TAMBAHKAN INI
 
 const app = express();
 const prisma = new PrismaClient();
@@ -16,8 +16,8 @@ app.get('/', (req, res) => {
   res.json({ pesan: "Selamat datang di API SapuLidi SuperApp!" });
 });
 
-// Gunakan Route Auth
 app.use('/api/auth', authRoutes);
+app.use('/api/events', eventRoutes); // TAMBAHKAN INI
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
