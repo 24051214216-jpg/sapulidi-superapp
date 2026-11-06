@@ -4,6 +4,8 @@ const cors = require('cors');
 const { PrismaClient } = require('@prisma/client');
 const path = require('path');
 const session = require('express-session');
+const multer = require('multer');
+const fs = require('fs');
 
 // 1. Import Routes API
 const authRoutes = require('./src/routes/authRoutes');
@@ -27,44 +29,54 @@ app.use(session({
   saveUninitialized: true
 }));
 
-// 4. Daftarkan Route API
+// 4. Setup Folder & Endpoint Upload Foto
+if (!fs.existsSync('./uploads')) {
+  fs.mkdirSync('./uploads');
+}
+app.use('/uploads', express.static('uploads')); // Agar foto bisa diakses lewat URL
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, './uploads/');
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + '-' + file.originalname.replace(/\s+/g, '-'));
+  }
+});
+const upload = multer({ storage: storage });
+
+app.post('/api/upload', upload.single('foto'), (req, res) => {
+  if (!req.file) return res.status(400).json({ message: "Tidak ada file yang diupload" });
+  
+  // URL ini akan disimpan di database dan diakses oleh Flutter
+  const fileUrl = `http://localhost:3000/uploads/${req.file.filename}`;
+  res.status(200).json({ message: "Upload berhasil", url: fileUrl });
+});
+
+// 5. Daftarkan Route API
 app.use('/api/auth', authRoutes);
 app.use('/api/events', eventRoutes);
 app.use('/api/attendance', attendanceRoutes);
 app.use('/api/budgets', budgetRoutes);
 
-// 5. Route API Dasar (Tes)
+// 6. Route Web Admin
 app.get('/', (req, res) => {
   res.json({ pesan: "Selamat datang di API SapuLidi SuperApp!" });
 });
 
-// 6. Route Web Admin (Mengambil data asli dari database)
 app.get('/admin', async (req, res) => {
   try {
-    // a. Hitung total warga aktif
     const totalWarga = await prisma.user.count({ where: { status: 'AKTIF' } });
-    
-    // b. Hitung total Event
     const totalEvent = await prisma.event.count();
-    
-    // c. Hitung total Kas (Pemasukan - Pengeluaran)
     const kasMasuk = await prisma.cashLedger.aggregate({ where: { tipe: 'MASUK' }, _sum: { jumlah: true } });
     const kasKeluar = await prisma.cashLedger.aggregate({ where: { tipe: 'KELUAR' }, _sum: { jumlah: true } });
     const totalKas = (kasMasuk._sum.jumlah || 0) - (kasKeluar._sum.jumlah || 0);
-
-    // d. Ambil daftar pengajuan anggaran yang butuh persetujuan (Status: DIAJUKAN)
     const pengajuanAnggaran = await prisma.budgetRequest.findMany({
       where: { status: 'DIAJUKAN' },
-      include: { event: true } // Ambil data event terkait
+      include: { event: true }
     });
 
-    // Kirim semua data ke file EJS
-    res.render('dashboard', { 
-      totalWarga, 
-      totalEvent, 
-      totalKas, 
-      pengajuanAnggaran 
-    });
+    res.render('dashboard', { totalWarga, totalEvent, totalKas, pengajuanAnggaran });
   } catch (error) {
     res.status(500).send("Terjadi kesalahan saat memuat dashboard: " + error.message);
   }
