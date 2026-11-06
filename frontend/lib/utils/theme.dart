@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 
 class AppTheme {
   static const Color primaryGreen = Color(0xFF107C41); // Hijau gelap
+  static const Color lightGreen = Color(
+    0xFFE8F5E9,
+  ); // Hijau sangat muda (TAMBAHAN)
   static const Color accentOrange = Color(0xFFFF7A00); // Oranye cerah
   static const Color bgColor = Color(0xFFF5F7FA);
   static const Color textDark = Color(0xFF1E1E1E); // Hitam pekat
@@ -13,7 +16,6 @@ class AppTheme {
       primaryColor: primaryGreen,
       colorScheme: ColorScheme.fromSeed(seedColor: primaryGreen),
 
-      // Menggunakan font standar sistem yang tebal dan bersih
       fontFamily: 'Segoe UI',
 
       textTheme: const TextTheme(
@@ -33,7 +35,7 @@ class AppTheme {
 
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: textDark, // Tombol hitam
+          backgroundColor: textDark,
           foregroundColor: Colors.white,
           elevation: 0,
           shape: RoundedRectangleBorder(

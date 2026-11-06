@@ -54,16 +54,14 @@ class ApiService {
         final data = jsonDecode(response.body);
         return data['data'];
       } else {
-        throw Exception(
-          'Gagal memuat data event (Error: ${response.statusCode})',
-        );
+        throw Exception('Gagal memuat data event');
       }
     } catch (e) {
       throw Exception('Koneksi gagal: $e');
     }
   }
 
-  // --- 3. FUNGSI UPLOAD FOTO (SUPPORT WEB & MOBILE) ---
+  // --- 3. FUNGSI UPLOAD FOTO ---
   static Future<String?> uploadFoto(dynamic file) async {
     try {
       var request = http.MultipartRequest('POST', Uri.parse('$baseUrl/upload'));
@@ -91,7 +89,7 @@ class ApiService {
     }
   }
 
-  // --- 4. FUNGSI ABSEN (KIRIM DATA GEOTAGGING) ---
+  // --- 4. FUNGSI ABSEN ---
   static Future<Map<String, dynamic>> absenKerjaBakti(
     String eventId,
     double lat,
@@ -125,6 +123,31 @@ class ApiService {
       }
     } catch (e) {
       return {'success': false, 'message': 'Koneksi gagal: $e'};
+    }
+  }
+
+  // --- 5. FUNGSI GET NEWS (BARU) ---
+  static Future<List<dynamic>> getNews() async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+
+      final response = await http.get(
+        Uri.parse('$baseUrl/news'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        return data['data'];
+      } else {
+        throw Exception('Gagal memuat berita');
+      }
+    } catch (e) {
+      throw Exception('Koneksi gagal: $e');
     }
   }
 }
