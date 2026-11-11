@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'screens/login_screen.dart';
+import 'screens/splash_screen.dart';
 import 'utils/theme.dart';
 
 void main() {
@@ -20,7 +20,7 @@ class SapuLidiApp extends StatelessWidget {
       debugShowCheckedModeBanner:
           false, // Menghilangkan banner "DEBUG" di pojok
       theme: AppTheme.lightTheme, // Memanggil tema dari utils/theme.dart
-      home: const LoginScreen(),
+      home: const SplashScreen(),
     );
   }
 }

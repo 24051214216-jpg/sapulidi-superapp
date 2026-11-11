@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../services/api_service.dart';
 import '../utils/theme.dart';
-import 'home_screen.dart';
+import 'dashboard_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -28,7 +28,7 @@ class _LoginScreenState extends State<LoginScreen> {
       if (result['success']) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const HomeScreen()),
+          MaterialPageRoute(builder: (context) => const DashboardScreen()),
         );
       } else {
         ScaffoldMessenger.of(context)
@@ -156,3 +156,4 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 }
+

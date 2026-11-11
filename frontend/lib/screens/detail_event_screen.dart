@@ -25,16 +25,13 @@ class _DetailEventScreenState extends State<DetailEventScreen> {
     setState(() => _isLoading = true);
     try {
       bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-      if (!serviceEnabled) {
-        throw 'GPS tidak aktif. Nyalakan lokasi HP/PC Anda.';
-      }
+      if (!serviceEnabled) throw 'GPS tidak aktif. Nyalakan lokasi HP/PC Anda.';
 
       LocationPermission permission = await Geolocator.checkPermission();
       if (permission == LocationPermission.denied) {
         permission = await Geolocator.requestPermission();
-        if (permission == LocationPermission.denied) {
+        if (permission == LocationPermission.denied)
           throw 'Izin lokasi ditolak.';
-        }
       }
 
       const LocationSettings locationSettings = LocationSettings(
@@ -52,20 +49,16 @@ class _DetailEventScreenState extends State<DetailEventScreen> {
         preferredCameraDevice: CameraDevice.front,
       );
 
-      if (photo != null) {
+      if (photo != null)
         setState(() => _imageFile = photo);
-      } else {
+      else
         throw 'Foto tidak diambil.';
-      }
     } catch (e) {
-      if (mounted) {
+      if (mounted)
         ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(content: Text(e.toString())));
-      }
     } finally {
-      if (mounted) {
-        setState(() => _isLoading = false);
-      }
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 
@@ -83,20 +76,20 @@ class _DetailEventScreenState extends State<DetailEventScreen> {
       return;
     }
 
+    // MENGIRIM PARAMETER isMocked ASLI DARI GEOLOCATOR
     final result = await ApiService.absenKerjaBakti(
       widget.eventData['id'],
       _currentPosition!.latitude,
       _currentPosition!.longitude,
       fotoUrl,
+      _currentPosition!.isMocked, // <--- REVISI: Kirim status Fake GPS
     );
 
     if (mounted) {
       setState(() => _isLoading = false);
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text(result['message'])));
-      if (result['success']) {
-        Navigator.pop(context);
-      }
+      if (result['success']) Navigator.pop(context);
     }
   }
 
@@ -180,6 +173,7 @@ class _DetailEventScreenState extends State<DetailEventScreen> {
                           ),
                   ),
                   const SizedBox(height: 16),
+
                   Container(
                     padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
@@ -243,12 +237,10 @@ class _DetailEventScreenState extends State<DetailEventScreen> {
                     child: Text(_isLoading ? 'MENGIRIM...' : 'KIRIM ABSENSI'),
                   ),
                   TextButton(
-                    onPressed: () {
-                      setState(() {
-                        _imageFile = null;
-                        _currentPosition = null;
-                      });
-                    },
+                    onPressed: () => setState(() {
+                      _imageFile = null;
+                      _currentPosition = null;
+                    }),
                     child: const Text(
                       'Ulangi Ambil Foto',
                       style: TextStyle(color: AppTheme.textGrey),

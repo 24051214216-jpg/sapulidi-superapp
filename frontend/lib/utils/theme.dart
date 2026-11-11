@@ -9,6 +9,8 @@ class AppTheme {
   static const Color bgColor = Color(0xFFF5F7FA);
   static const Color textDark = Color(0xFF1E1E1E); // Hitam pekat
   static const Color textGrey = Color(0xFF757575);
+  static const Color teal = Color(0xFF00897B);
+  static const Color lightBlue = Color(0xFFE3F2FD);
 
   static ThemeData get lightTheme {
     return ThemeData(

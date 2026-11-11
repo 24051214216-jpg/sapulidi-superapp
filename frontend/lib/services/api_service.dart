@@ -1,13 +1,25 @@
 import 'dart:convert';
+import 'dart:io' show Platform;
 
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiService {
-  static const String baseUrl = 'http://localhost:3000/api';
+  // Base URL Dinamis (Web, Emulator, HP Fisik)
+  static String get baseUrl {
+    if (kIsWeb) {
+      return 'http://localhost:3000/api';
+    } else if (Platform.isAndroid) {
+      // Jika pakai Emulator Android, gunakan 10.0.2.2
+      // Jika pakai HP Fisik, GANTI dengan IP LAN Laptop (misal: 192.168.1.10:3000/api)
+      return 'http://10.0.2.2:3000/api';
+    } else {
+      return 'http://localhost:3000/api'; // iOS
+    }
+  }
 
-  // --- 1. FUNGSI LOGIN ---
+  // --- 1. LOGIN ---
   static Future<Map<String, dynamic>> login(
     String noHp,
     String password,
@@ -20,13 +32,11 @@ class ApiService {
       );
 
       final data = jsonDecode(response.body);
-
       if (response.statusCode == 200) {
         SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.setString('token', data['token']);
         await prefs.setString('nama', data['user']['nama']);
         await prefs.setString('role', data['user']['role']);
-
         return {'success': true, 'message': data['message']};
       } else {
         return {'success': false, 'message': data['message']};
@@ -36,7 +46,7 @@ class ApiService {
     }
   }
 
-  // --- 2. FUNGSI GET EVENTS ---
+  // --- 2. GET EVENTS ---
   static Future<List<dynamic>> getEvents() async {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -61,18 +71,29 @@ class ApiService {
     }
   }
 
-  // --- 3. FUNGSI UPLOAD FOTO ---
+  // --- 3. UPLOAD FOTO ---
   static Future<String?> uploadFoto(dynamic file) async {
     try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+
       var request = http.MultipartRequest('POST', Uri.parse('$baseUrl/upload'));
+      request.headers['Authorization'] =
+          'Bearer $token'; // Tambahkan token ke header upload
 
       if (kIsWeb) {
         var bytes = await file.readAsBytes();
         request.files.add(
-          http.MultipartFile.fromBytes('foto', bytes, filename: 'selfie.jpg'),
+          http.MultipartFile.fromBytes('foto', bytes, filename: 'selfie.png'),
         );
       } else {
-        request.files.add(await http.MultipartFile.fromPath('foto', file.path));
+        request.files.add(
+          await http.MultipartFile.fromPath(
+            'foto',
+            file.path,
+            filename: 'selfie.png',
+          ),
+        );
       }
 
       var streamedResponse = await request.send();
@@ -80,7 +101,7 @@ class ApiService {
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        return data['url'];
+        return data['url']; // Path relatif: /uploads/...
       }
       return null;
     } catch (e) {
@@ -89,12 +110,13 @@ class ApiService {
     }
   }
 
-  // --- 4. FUNGSI ABSEN ---
+  // --- 4. ABSEN (DENGAN ISMOCK) ---
   static Future<Map<String, dynamic>> absenKerjaBakti(
     String eventId,
     double lat,
     double lng,
     String fotoUrl,
+    bool isMock, // Parameter baru
   ) async {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -111,7 +133,7 @@ class ApiService {
           'lat': lat,
           'lng': lng,
           'fotoPath': fotoUrl,
-          'isMock': false,
+          'isMock': isMock, // Kirim status asli
         }),
       );
 
@@ -126,7 +148,7 @@ class ApiService {
     }
   }
 
-  // --- 5. FUNGSI GET NEWS (BARU) ---
+  // --- 5. GET NEWS ---
   static Future<List<dynamic>> getNews() async {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();

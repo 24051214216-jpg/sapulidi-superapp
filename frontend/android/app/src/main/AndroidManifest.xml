@@ -1,8 +1,18 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    
+    <!-- IZIN AKSES YANG DIBUTUHKAN SAPULIDI -->
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.CAMERA"/>
+    <!-- ------------------------------------ -->
+
     <application
-        android:label="frontend"
+        android:label="SapuLidi"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/ic_launcher"
+        android:usesCleartextTraffic="true"> <!-- TAMBAHAN UNTUK HTTP LOKAL -->
+        
         <activity
             android:name=".MainActivity"
             android:exported="true"
