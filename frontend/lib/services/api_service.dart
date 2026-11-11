@@ -19,7 +19,10 @@ class ApiService {
     }
   }
 
-  // --- 1. LOGIN ---
+  // ==========================================
+  // 1. AUTENTIKASI (LOGIN & REGISTER)
+  // ==========================================
+
   static Future<Map<String, dynamic>> login(
     String noHp,
     String password,
@@ -46,7 +49,33 @@ class ApiService {
     }
   }
 
-  // --- 2. GET EVENTS ---
+  static Future<Map<String, dynamic>> register(
+    String nama,
+    String noHp,
+    String password,
+  ) async {
+    try {
+      final response = await http.post(
+        Uri.parse('$baseUrl/auth/register'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'nama': nama, 'noHp': noHp, 'password': password}),
+      );
+
+      final data = jsonDecode(response.body);
+      if (response.statusCode == 201) {
+        return {'success': true, 'message': data['message']};
+      } else {
+        return {'success': false, 'message': data['message']};
+      }
+    } catch (e) {
+      return {'success': false, 'message': 'Koneksi ke server gagal: $e'};
+    }
+  }
+
+  // ==========================================
+  // 2. EVENT & KEGIATAN
+  // ==========================================
+
   static Future<List<dynamic>> getEvents() async {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -71,15 +100,17 @@ class ApiService {
     }
   }
 
-  // --- 3. UPLOAD FOTO ---
+  // ==========================================
+  // 3. ABSENSI (KAMERA & GPS)
+  // ==========================================
+
   static Future<String?> uploadFoto(dynamic file) async {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
 
       var request = http.MultipartRequest('POST', Uri.parse('$baseUrl/upload'));
-      request.headers['Authorization'] =
-          'Bearer $token'; // Tambahkan token ke header upload
+      request.headers['Authorization'] = 'Bearer $token';
 
       if (kIsWeb) {
         var bytes = await file.readAsBytes();
@@ -110,13 +141,12 @@ class ApiService {
     }
   }
 
-  // --- 4. ABSEN (DENGAN ISMOCK) ---
   static Future<Map<String, dynamic>> absenKerjaBakti(
     String eventId,
     double lat,
     double lng,
     String fotoUrl,
-    bool isMock, // Parameter baru
+    bool isMock,
   ) async {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -133,7 +163,7 @@ class ApiService {
           'lat': lat,
           'lng': lng,
           'fotoPath': fotoUrl,
-          'isMock': isMock, // Kirim status asli
+          'isMock': isMock,
         }),
       );
 
@@ -148,7 +178,10 @@ class ApiService {
     }
   }
 
-  // --- 5. GET NEWS ---
+  // ==========================================
+  // 4. BERITA & PENGUMUMAN
+  // ==========================================
+
   static Future<List<dynamic>> getNews() async {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -170,6 +203,189 @@ class ApiService {
       }
     } catch (e) {
       throw Exception('Koneksi gagal: $e');
+    }
+  }
+
+  // ==========================================
+  // 5. KEUANGAN (TAGIHAN, PEMBAYARAN, KAS)
+  // ==========================================
+
+  static Future<List<dynamic>> getInvoices() async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+
+      final response = await http.get(
+        Uri.parse('$baseUrl/finance/invoices'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        return data['data'];
+      } else {
+        throw Exception('Gagal memuat tagihan');
+      }
+    } catch (e) {
+      throw Exception('Koneksi gagal: $e');
+    }
+  }
+
+  static Future<Map<String, dynamic>> createPayment(
+    String invoiceId,
+    String buktiPath,
+  ) async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+
+      final response = await http.post(
+        Uri.parse('$baseUrl/finance/payments'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode({'invoiceId': invoiceId, 'buktiPath': buktiPath}),
+      );
+
+      final data = jsonDecode(response.body);
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return {'success': true, 'message': data['message'] ?? 'Berhasil'};
+      } else {
+        return {'success': false, 'message': data['message'] ?? 'Gagal'};
+      }
+    } catch (e) {
+      return {'success': false, 'message': 'Koneksi gagal: $e'};
+    }
+  }
+
+  static Future<Map<String, dynamic>> getCashLedger() async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+
+      final response = await http.get(
+        Uri.parse('$baseUrl/finance/cash'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body);
+      } else {
+        throw Exception('Gagal memuat kas RT');
+      }
+    } catch (e) {
+      throw Exception('Koneksi gagal: $e');
+    }
+  }
+
+  // ==========================================
+  // 6. ADMINISTRASI & INVENTARIS
+  // ==========================================
+
+  // --- 10. E-SURAT (AJUKAN SURAT) ---
+  static Future<Map<String, dynamic>> ajukanSurat(
+    String jenisSurat,
+    String keperluan,
+  ) async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+
+      final response = await http.post(
+        Uri.parse('$baseUrl/admin-warga/letter'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode({'jenisSurat': jenisSurat, 'keperluan': keperluan}),
+      );
+
+      final data = jsonDecode(response.body);
+      if (response.statusCode == 201) {
+        return {
+          'success': true,
+          'message': data['message'] ?? 'Surat berhasil diajukan',
+        };
+      } else {
+        return {
+          'success': false,
+          'message': data['message'] ?? 'Gagal mengajukan surat',
+        };
+      }
+    } catch (e) {
+      return {'success': false, 'message': 'Koneksi gagal: $e'};
+    }
+  }
+
+  // --- 11. GET ASSETS (Daftar Alat) ---
+  static Future<List<dynamic>> getAssets() async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+
+      final response = await http.get(
+        Uri.parse('$baseUrl/assets'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        return data['data'];
+      } else {
+        throw Exception('Gagal memuat data alat');
+      }
+    } catch (e) {
+      throw Exception('Koneksi gagal: $e');
+    }
+  }
+
+  // --- 12. AJUKAN PEMINJAMAN ALAT ---
+  static Future<Map<String, dynamic>> ajukanPeminjamanAlat(
+    String assetId,
+    String eventId,
+    String tglKembali,
+  ) async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+
+      final response = await http.post(
+        Uri.parse('$baseUrl/assets/loans'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode({
+          'assetId': assetId,
+          'eventId': eventId,
+          'tglKembali': tglKembali,
+        }),
+      );
+
+      final data = jsonDecode(response.body);
+      if (response.statusCode == 201) {
+        return {
+          'success': true,
+          'message': data['message'] ?? 'Peminjaman berhasil',
+        };
+      } else {
+        return {
+          'success': false,
+          'message': data['message'] ?? 'Gagal mengajukan peminjaman',
+        };
+      }
+    } catch (e) {
+      return {'success': false, 'message': 'Koneksi gagal: $e'};
     }
   }
 }

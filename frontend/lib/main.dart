@@ -20,7 +20,7 @@ class SapuLidiApp extends StatelessWidget {
       debugShowCheckedModeBanner:
           false, // Menghilangkan banner "DEBUG" di pojok
       theme: AppTheme.lightTheme, // Memanggil tema dari utils/theme.dart
-      home: const SplashScreen(),
+      home: const SplashScreen(), // Halaman pertama yang muncul adalah Splash Screen
     );
   }
 }

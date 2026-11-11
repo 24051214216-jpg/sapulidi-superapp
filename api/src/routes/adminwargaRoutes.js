@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const adminWargaController = require('../controllers/adminWargaController');
+const adminWargaController = require('../controllers/adminwargaController');
 const { verifyToken } = require('../middlewares/verifyToken');
 
 // Semua endpoint wajib login. Pembatasan role (pengurus) dilakukan di controller.

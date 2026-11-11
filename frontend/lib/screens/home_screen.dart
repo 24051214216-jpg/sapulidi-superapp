@@ -4,7 +4,8 @@ import '../services/api_service.dart';
 import '../utils/theme.dart';
 import 'login_screen.dart';
 import 'detail_event_screen.dart';
-import 'news_screen.dart'; // TAMBAHKAN INI
+import 'news_screen.dart';
+import 'keuangan_screen.dart'; // TAMBAHKAN IMPORT INI
 
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -128,21 +129,21 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                           ),
                           const SizedBox(height: 20),
-                          Row(
+                          // Menggunakan Column agar tombol tersusun rapi ke bawah
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
                               ElevatedButton(
                                 onPressed: () {},
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: AppTheme.accentOrange,
                                   padding: const EdgeInsets.symmetric(
-                                    horizontal: 20,
                                     vertical: 12,
                                   ),
                                 ),
                                 child: const Text('Lihat Kegiatan'),
                               ),
-                              const SizedBox(width: 10),
-                              // TOMBOL BERITA BARU
+                              const SizedBox(height: 10),
                               OutlinedButton(
                                 onPressed: () {
                                   Navigator.push(
@@ -156,11 +157,34 @@ class _HomeScreenState extends State<HomeScreen> {
                                   foregroundColor: Colors.white,
                                   side: const BorderSide(color: Colors.white),
                                   padding: const EdgeInsets.symmetric(
-                                    horizontal: 20,
                                     vertical: 12,
                                   ),
                                 ),
                                 child: const Text('Baca Berita'),
+                              ),
+                              const SizedBox(height: 10),
+                              // TOMBOL KEUANGAN BARU
+                              OutlinedButton.icon(
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          const KeuanganScreen(),
+                                    ),
+                                  );
+                                },
+                                style: OutlinedButton.styleFrom(
+                                  foregroundColor: Colors.white,
+                                  side: const BorderSide(color: Colors.white),
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 12,
+                                  ),
+                                ),
+                                icon: const Icon(
+                                  Icons.account_balance_wallet_rounded,
+                                ),
+                                label: const Text('Iuran Saya'),
                               ),
                             ],
                           ),
