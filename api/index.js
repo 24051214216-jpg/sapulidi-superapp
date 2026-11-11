@@ -16,7 +16,8 @@ const attendanceRoutes = require('./src/routes/attendanceRoutes');
 const budgetRoutes = require('./src/routes/budgetRoutes');
 const newsRoutes = require('./src/routes/newsRoutes');
 const financeRoutes = require('./src/routes/financeRoutes');
-const assetRoutes = require('./src/routes/assetRoutes'); // <-- FASE 3: ROUTE INVENTARIS
+const assetRoutes = require('./src/routes/assetRoutes');
+const adminWargaRoutes = require('./src/routes/adminWargaRoutes'); // <-- FASE 4 IMPORT
 
 const { verifyToken } = require('./src/middlewares/verifyToken');
 
@@ -66,7 +67,8 @@ app.use('/api/attendance', attendanceRoutes);
 app.use('/api/budgets', budgetRoutes);
 app.use('/api/news', newsRoutes);
 app.use('/api/finance', financeRoutes);
-app.use('/api/assets', assetRoutes); // <-- FASE 3: DAFTARKAN ROUTE INVENTARIS
+app.use('/api/assets', assetRoutes);
+app.use('/api/admin-warga', adminWargaRoutes); // <-- FASE 4 DAFTARKAN ROUTE
 
 // Route Health Check
 app.get('/', (req, res) => { res.json({ pesan: "API SapuLidi Berjalan!" }); });
