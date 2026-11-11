@@ -15,7 +15,8 @@ const eventRoutes = require('./src/routes/eventRoutes');
 const attendanceRoutes = require('./src/routes/attendanceRoutes');
 const budgetRoutes = require('./src/routes/budgetRoutes');
 const newsRoutes = require('./src/routes/newsRoutes');
-const financeRoutes = require('./src/routes/financeRoutes'); // <-- FASE 2: ROUTE KEUANGAN
+const financeRoutes = require('./src/routes/financeRoutes');
+const assetRoutes = require('./src/routes/assetRoutes'); // <-- FASE 3: ROUTE INVENTARIS
 
 const { verifyToken } = require('./src/middlewares/verifyToken');
 
@@ -29,7 +30,6 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Setup EJS & Session untuk Web Admin
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 app.use(session({
@@ -53,8 +53,6 @@ const upload = multer({ storage: storage });
 // Endpoint Upload (Wajib Login)
 app.post('/api/upload', verifyToken, upload.single('foto'), (req, res) => {
   if (!req.file) return res.status(400).json({ message: "Tidak ada file yang diupload" });
-  
-  // Path relatif, nanti di frontend/web digabung dengan base URL
   const fileUrl = `/uploads/${req.file.filename}`;
   res.status(200).json({ message: "Upload berhasil", url: fileUrl });
 });
@@ -67,7 +65,8 @@ app.use('/api/events', eventRoutes);
 app.use('/api/attendance', attendanceRoutes);
 app.use('/api/budgets', budgetRoutes);
 app.use('/api/news', newsRoutes);
-app.use('/api/finance', financeRoutes); // <-- FASE 2: DAFTARKAN ROUTE KEUANGAN
+app.use('/api/finance', financeRoutes);
+app.use('/api/assets', assetRoutes); // <-- FASE 3: DAFTARKAN ROUTE INVENTARIS
 
 // Route Health Check
 app.get('/', (req, res) => { res.json({ pesan: "API SapuLidi Berjalan!" }); });
