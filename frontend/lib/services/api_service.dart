@@ -413,4 +413,48 @@ class ApiService {
       throw Exception('Koneksi gagal: $e');
     }
   }
+
+  // --- 14. LAPOR TAMU MENGINAP ---
+  static Future<Map<String, dynamic>> laporTamu(
+    String namaTamu,
+    String noKtpTamu,
+    String hubungan,
+    String mulaiMenginap,
+    String selesaiMenginap,
+  ) async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+
+      final response = await http.post(
+        Uri.parse('$baseUrl/admin-warga/guest'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode({
+          'namaTamu': namaTamu,
+          'noKtpTamu': noKtpTamu,
+          'hubungan': hubungan,
+          'mulaiMenginap': mulaiMenginap,
+          'selesaiMenginap': selesaiMenginap,
+        }),
+      );
+
+      final data = jsonDecode(response.body);
+      if (response.statusCode == 201) {
+        return {
+          'success': true,
+          'message': data['message'] ?? 'Laporan tamu berhasil dikirim',
+        };
+      } else {
+        return {
+          'success': false,
+          'message': data['message'] ?? 'Gagal mengirim laporan tamu',
+        };
+      }
+    } catch (e) {
+      return {'success': false, 'message': 'Koneksi gagal: $e'};
+    }
+  }
 }

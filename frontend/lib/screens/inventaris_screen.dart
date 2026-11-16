@@ -62,10 +62,55 @@ class _InventarisScreenState extends State<InventarisScreen> {
         if (_selectedCategory == 'Perkakas') {
           matchesCategory = name.contains('tangga') || name.contains('cangkul');
         }
+        if (_selectedCategory == 'Acara') {
+          matchesCategory = name.contains('kursi') || name.contains('sound');
+        }
       }
 
       return matchesSearch && matchesCategory;
     }).toList();
+  }
+
+  // Pop-up Konfirmasi Pengembalian Alat
+  void _konfirmasiKembalikan() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: Text(
+          'Konfirmasi Pengembalian',
+          style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.bold),
+        ),
+        content: Text(
+          'Apakah Anda yakin ingin mengembalikan alat ini? Pastikan kondisi alat sesuai.',
+          style: GoogleFonts.plusJakartaSans(fontSize: 14),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(
+              'Batal',
+              style: GoogleFonts.plusJakartaSans(color: Colors.grey),
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pop(context); // Tutup dialog
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Alat berhasil dikembalikan (Simulasi).'),
+                ),
+              );
+            },
+            style: ElevatedButton.styleFrom(backgroundColor: primaryGreen),
+            child: Text(
+              'Ya, Kembalikan',
+              style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.bold),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -163,10 +208,14 @@ class _InventarisScreenState extends State<InventarisScreen> {
                       ),
                     ),
                     ElevatedButton(
-                      onPressed: () {},
+                      onPressed: _konfirmasiKembalikan, // Memanggil pop-up
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.white,
                         foregroundColor: primaryGreen,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 8,
+                        ),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20),
                         ),
@@ -219,6 +268,7 @@ class _InventarisScreenState extends State<InventarisScreen> {
                   _buildChip('Tenda'),
                   _buildChip('Kebersihan'),
                   _buildChip('Perkakas'),
+                  _buildChip('Acara'),
                 ],
               ),
             ),
@@ -370,7 +420,7 @@ class _InventarisScreenState extends State<InventarisScreen> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: primaryGreen,
                   disabledBackgroundColor: Colors.grey.shade300,
-                  // PERBAIKAN: Padding ditambahkan agar teks tidak mepet
+                  // Padding yang pas agar teks tidak mepet
                   padding: const EdgeInsets.symmetric(
                     horizontal: 16,
                     vertical: 8,

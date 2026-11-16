@@ -1,77 +1,50 @@
 import 'package:flutter/material.dart';
 
-class AppTheme {
-  static const Color primaryGreen = Color(0xFF107C41); // Hijau gelap
-  static const Color lightGreen = Color(
-    0xFFE8F5E9,
-  ); // Hijau sangat muda (TAMBAHAN)
-  static const Color accentOrange = Color(0xFFFF7A00); // Oranye cerah
-  static const Color bgColor = Color(0xFFF5F7FA);
-  static const Color textDark = Color(0xFF1E1E1E); // Hitam pekat
-  static const Color textGrey = Color(0xFF757575);
-  static const Color teal = Color(0xFF00897B);
-  static const Color lightBlue = Color(0xFFE3F2FD);
+class AppColors {
+  static const Color primary = Color(0xFF107C41);
+  static const Color primaryDark = Color(0xFF004E25);
+  static const Color primaryLight = Color(0xFFD7F5E3);
+  static const Color mint = Color(0xFF96F7AF);
+  static const Color background = Color(0xFFF8F9FA);
+  static const Color surface = Colors.white;
+  static const Color textDark = Color(0xFF1A1D1E);
+  static const Color textMuted = Color(0xFF757575);
+  static const Color danger = Color(0xFFDC2626);
+  static const Color dangerLight = Color(0xFFFEE2E2);
+  static const Color border = Color(0xFFE5E7EB);
+}
 
+class AppTheme {
   static ThemeData get lightTheme {
     return ThemeData(
-      scaffoldBackgroundColor: bgColor,
-      primaryColor: primaryGreen,
-      colorScheme: ColorScheme.fromSeed(seedColor: primaryGreen),
-
-      fontFamily: 'Segoe UI',
-
-      textTheme: const TextTheme(
-        titleLarge: TextStyle(
-          color: textDark,
-          fontWeight: FontWeight.bold,
-          fontSize: 22,
-        ),
-        titleMedium: TextStyle(
-          color: textDark,
-          fontWeight: FontWeight.w700,
-          fontSize: 16,
-        ),
-        bodyLarge: TextStyle(color: textDark, fontSize: 16),
-        bodyMedium: TextStyle(color: textGrey, fontSize: 14),
+      useMaterial3: true,
+      colorScheme: ColorScheme.fromSeed(
+        seedColor: AppColors.primary,
+        primary: AppColors.primary,
+        surface: AppColors.surface,
       ),
-
+      scaffoldBackgroundColor: AppColors.background,
+      fontFamily: 'PlusJakartaSans',
+      appBarTheme: const AppBarTheme(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        centerTitle: true,
+        iconTheme: IconThemeData(color: AppColors.textDark),
+        titleTextStyle: TextStyle(
+          color: AppColors.textDark,
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: textDark,
+          backgroundColor: AppColors.primary,
           foregroundColor: Colors.white,
-          elevation: 0,
+          minimumSize: const Size.fromHeight(50),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
-          padding: const EdgeInsets.symmetric(vertical: 18),
-          textStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-        ),
-      ),
-
-      inputDecorationTheme: InputDecorationTheme(
-        filled: true,
-        fillColor: Colors.white,
-        contentPadding: const EdgeInsets.symmetric(
-          vertical: 18,
-          horizontal: 20,
-        ),
-        labelStyle: const TextStyle(
-          color: Colors.black87,
-          fontWeight: FontWeight.bold,
-          fontSize: 14,
-        ),
-        hintStyle: const TextStyle(color: Colors.grey),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide.none,
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide.none,
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: primaryGreen, width: 2),
+          elevation: 0,
         ),
       ),
     );

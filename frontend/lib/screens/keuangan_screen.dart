@@ -5,6 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:url_launcher/url_launcher.dart'; // Untuk WhatsApp
 
 import '../services/api_service.dart';
+import 'riwayat_pembayaran_screen.dart'; // Import Halaman Riwayat
 
 class KeuanganScreen extends StatefulWidget {
   const KeuanganScreen({super.key});
@@ -149,7 +150,6 @@ class _KeuanganScreenState extends State<KeuanganScreen> {
           ),
           Padding(
             padding: const EdgeInsets.only(right: 16.0),
-            // POIN 10: Logo Karakter 3D
             child: Container(
               width: 36,
               height: 36,
@@ -590,7 +590,6 @@ class _KeuanganScreenState extends State<KeuanganScreen> {
                       ],
                     ),
                     OutlinedButton(
-                      // POIN 11: SALIN REKENING
                       onPressed: () {
                         Clipboard.setData(
                           const ClipboardData(text: '1370019283741'),
@@ -863,7 +862,15 @@ class _KeuanganScreenState extends State<KeuanganScreen> {
               ),
             ),
             GestureDetector(
-              onTap: () => _snack('Halaman riwayat penuh segera hadir'),
+              onTap: () {
+                // Navigasi ke Halaman Riwayat Lengkap
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const RiwayatPembayaranScreen(),
+                  ),
+                );
+              },
               child: Text(
                 'Lihat Semua',
                 style: GoogleFonts.plusJakartaSans(
@@ -1020,7 +1027,6 @@ class _KeuanganScreenState extends State<KeuanganScreen> {
                 ),
                 const SizedBox(height: 12),
                 OutlinedButton.icon(
-                  // POIN 14: Buka WA
                   onPressed: () async {
                     final Uri url = Uri.parse(
                       'https://wa.me/6281234567890?text=Halo%20Pak%20RT,%20saya%20butuh%20bantuan%20terkait%20iuran.',

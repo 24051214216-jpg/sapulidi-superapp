@@ -3,7 +3,7 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:url_launcher/url_launcher.dart'; // Untuk Darurat
+import 'package:url_launcher/url_launcher.dart';
 
 import '../services/api_service.dart';
 import 'detail_event_screen.dart';
@@ -12,7 +12,7 @@ import 'login_screen.dart';
 import 'news_screen.dart';
 import 'inventaris_screen.dart';
 import 'esurat_screen.dart';
-import 'notifikasi_screen.dart'; // Untuk Halaman Notif
+import 'notifikasi_screen.dart';
 
 class _C {
   static const surface = Color(0xFFFAF8FF);
@@ -363,7 +363,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
             height: 44,
             child: IconButton(
               onPressed: () {
-                // POIN 6: Buka Halaman Notifikasi
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (_) => const NotifikasiScreen()),
@@ -1355,11 +1354,16 @@ class _DashboardScreenState extends State<DashboardScreen> {
             ),
             const SizedBox(width: 8),
             GestureDetector(
-              // POIN 9: Tombol Darurat Berfungsi
               onTap: () async {
-                final Uri url = Uri.parse('tel:112'); // Nomor Darurat Nasional
-                if (!await launchUrl(url)) {
-                  _snack('Tidak dapat melakukan panggilan darurat');
+                // Menggunakan WA karena tel: sering diblokir di Web
+                final Uri url = Uri.parse(
+                  'https://wa.me/6281234567890?text=DARURAT!%20Saya%20butuh%20bantuan%20di%20RT%2005.',
+                );
+                if (!await launchUrl(
+                  url,
+                  mode: LaunchMode.externalApplication,
+                )) {
+                  _snack('Tidak dapat membuka aplikasi panggilan/WA');
                 }
               },
               child: Container(
@@ -1383,7 +1387,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
+  // ==========================================
+  // PROFIL DIPERBARUI: TANPA GAMBAR 3D
+  // ==========================================
   Widget _buildProfil() {
+    // Mengambil huruf pertama dari nama untuk Avatar
+    String inisial = _namaUser.isNotEmpty ? _namaUser[0].toUpperCase() : 'W';
+
     return SafeArea(
       bottom: false,
       child: SingleChildScrollView(
@@ -1401,23 +1411,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
               ),
               child: Column(
                 children: [
-                  Container(
-                    width: 100,
-                    height: 100,
-                    decoration: BoxDecoration(
-                      color: _C.surfaceContainerHigh,
-                      shape: BoxShape.circle,
-                      border: Border.all(color: _C.primary, width: 3),
-                    ),
-                    clipBehavior: Clip.antiAlias,
-                    child: Image.asset(
-                      'assets/images/karakter_sapulidi.png',
-                      fit: BoxFit.cover,
-                      errorBuilder: (_, _, _) => const Icon(
-                        Icons.person_rounded,
-                        size: 50,
-                        color: _C.primary,
-                      ),
+                  // AVATAR INISIAL, BUKAN GAMBAR 3D
+                  CircleAvatar(
+                    radius: 50,
+                    backgroundColor: _C.primary,
+                    child: Text(
+                      inisial,
+                      style: _jk(40, FontWeight.w700, Colors.white),
                     ),
                   ),
                   const SizedBox(height: 16),

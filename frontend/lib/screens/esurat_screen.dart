@@ -87,7 +87,6 @@ class _FormESuratScreenState extends State<FormESuratScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Step Indicator
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -141,7 +140,6 @@ class _FormESuratScreenState extends State<FormESuratScreen> {
             ),
             const SizedBox(height: 20),
 
-            // Data Pemohon
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
@@ -168,25 +166,6 @@ class _FormESuratScreenState extends State<FormESuratScreen> {
                           fontSize: 10,
                           fontWeight: FontWeight.bold,
                           color: primaryGreen,
-                        ),
-                      ),
-                      const Spacer(),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 2,
-                        ),
-                        decoration: BoxDecoration(
-                          color: lightGreen,
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Text(
-                          'KTP Aktif',
-                          style: GoogleFonts.plusJakartaSans(
-                            fontSize: 9,
-                            fontWeight: FontWeight.bold,
-                            color: primaryGreen,
-                          ),
                         ),
                       ),
                     ],
@@ -219,66 +198,15 @@ class _FormESuratScreenState extends State<FormESuratScreen> {
                               color: Colors.grey,
                             ),
                           ),
-                          const SizedBox(height: 4),
-                          Row(
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 6,
-                                  vertical: 2,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: lightGreen,
-                                  borderRadius: BorderRadius.circular(4),
-                                ),
-                                child: Text(
-                                  'Kepala Keluarga',
-                                  style: GoogleFonts.plusJakartaSans(
-                                    fontSize: 9,
-                                    color: primaryGreen,
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(width: 6),
-                              Text(
-                                'RT 05 / RW 08',
-                                style: GoogleFonts.plusJakartaSans(
-                                  fontSize: 9,
-                                  color: Colors.grey,
-                                ),
-                              ),
-                            ],
-                          ),
                         ],
                       ),
                     ],
-                  ),
-                  const SizedBox(height: 12),
-                  Container(
-                    padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      color: bgColor,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Row(
-                      children: [
-                        Icon(Icons.home, color: primaryGreen, size: 16),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: Text(
-                            'Jl. Menteng Asri Blok B3 No. 12, RT 05 / RW 08, Kel. Menteng Atas',
-                            style: GoogleFonts.plusJakartaSans(fontSize: 11),
-                          ),
-                        ),
-                      ],
-                    ),
                   ),
                 ],
               ),
             ),
             const SizedBox(height: 24),
 
-            // Pilih Kategori
             Text(
               'Pilih Kategori Surat',
               style: GoogleFonts.plusJakartaSans(
@@ -315,15 +243,9 @@ class _FormESuratScreenState extends State<FormESuratScreen> {
               'Pengajuan KUR UMKM, izin usaha mikro',
               Icons.storefront,
             ),
-            _buildRadioCard(
-              'Pindah Domisili / Kematian',
-              'Penerbitan surat jalan pindah KK atau akta',
-              Icons.transfer_within_a_station,
-            ),
 
             const SizedBox(height: 24),
 
-            // Keperluan
             Text(
               'Keperluan / Alasan Pengajuan',
               style: GoogleFonts.plusJakartaSans(
@@ -355,7 +277,6 @@ class _FormESuratScreenState extends State<FormESuratScreen> {
             ),
             const SizedBox(height: 16),
 
-            // No WA
             Text(
               'No. WhatsApp Aktif',
               style: GoogleFonts.plusJakartaSans(
@@ -385,33 +306,7 @@ class _FormESuratScreenState extends State<FormESuratScreen> {
                 ),
               ),
             ),
-            const SizedBox(height: 16),
-
-            // Info Box
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Colors.blue.shade50,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Icon(Icons.info, color: Colors.blue.shade700, size: 20),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      'Proses verifikasi TTD Digital Pak RT biasanya memakan waktu 1x24 jam kerja. Surat resmi langsung diterbitkan dengan QR Code.',
-                      style: GoogleFonts.plusJakartaSans(
-                        fontSize: 11,
-                        color: Colors.blue.shade900,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 100), // Space for bottom button
+            const SizedBox(height: 100),
           ],
         ),
       ),

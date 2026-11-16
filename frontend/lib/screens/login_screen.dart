@@ -25,6 +25,13 @@ class _LoginScreenState extends State<LoginScreen> {
   final Color darkGreen = const Color(0xFF084C27);
 
   void _prosesLogin() async {
+    if (_noHpController.text.isEmpty || _passwordController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Nomor HP dan Password wajib diisi!')),
+      );
+      return;
+    }
+
     setState(() => _isLoading = true);
     final result = await ApiService.login(
       _noHpController.text,
@@ -39,8 +46,12 @@ class _LoginScreenState extends State<LoginScreen> {
           MaterialPageRoute(builder: (context) => const DashboardScreen()),
         );
       } else {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text(result['message'])));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(result['message']),
+            backgroundColor: Colors.red,
+          ),
+        );
       }
     }
   }
@@ -49,12 +60,22 @@ class _LoginScreenState extends State<LoginScreen> {
     final Uri url = Uri.parse(
       'https://wa.me/6281234567890?text=Halo%20Admin%20SapuLidi,%20saya%20ingin%20bertanya.',
     );
-    if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
-      // PERBAIKAN: Menambahkan kurung kurawal {}
+    try {
+      if (!await launchUrl(url, mode: LaunchMode.platformDefault)) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text(
+                'Tidak dapat membuka WhatsApp. Pastikan browser mengizinkan pop-up.',
+              ),
+            ),
+          );
+        }
+      }
+    } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Tidak dapat membuka WhatsApp')),
-        );
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('Error: $e')));
       }
     }
   }
@@ -90,8 +111,10 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               child: Column(
                 children: [
+                  // PERBAIKAN: Logo Karakter 3D
                   Container(
-                    padding: const EdgeInsets.all(16),
+                    width: 80,
+                    height: 80,
                     decoration: BoxDecoration(
                       color: Colors.white,
                       shape: BoxShape.circle,
@@ -103,10 +126,10 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ],
                     ),
-                    child: Icon(
-                      Icons.cleaning_services,
-                      size: 36,
-                      color: primaryGreen,
+                    clipBehavior: Clip.antiAlias,
+                    child: Image.asset(
+                      'assets/images/karakter_sapulidi.png',
+                      fit: BoxFit.cover,
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -263,11 +286,8 @@ class _LoginScreenState extends State<LoginScreen> {
                             Checkbox(
                               value: _ingatSaya,
                               activeColor: primaryGreen,
-                              onChanged: (val) {
-                                setState(() {
-                                  _ingatSaya = val ?? false;
-                                });
-                              },
+                              onChanged: (val) =>
+                                  setState(() => _ingatSaya = val ?? false),
                             ),
                             Text(
                               'Ingat Saya',

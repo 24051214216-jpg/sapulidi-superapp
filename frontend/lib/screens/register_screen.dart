@@ -104,7 +104,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 color: Colors.white,
               ),
               clipBehavior: Clip.antiAlias,
-              // POIN 2: Logo Karakter 3D
               child: Image.asset(
                 'assets/images/karakter_sapulidi.png',
                 fit: BoxFit.cover,
@@ -252,7 +251,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          // POIN 5: Checkbox sudah berfungsi
                           Checkbox(
                             value: _agreeTerms,
                             activeColor: primaryGreen,

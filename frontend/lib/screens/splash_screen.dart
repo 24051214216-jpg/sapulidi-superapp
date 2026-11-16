@@ -53,7 +53,7 @@ class SplashScreen extends StatelessWidget {
 
               const Spacer(),
 
-              // Tombol Mulai (Warna Hijau)
+              // Tombol Mulai
               ElevatedButton(
                 onPressed: () {
                   Navigator.pushReplacement(
@@ -64,9 +64,7 @@ class SplashScreen extends StatelessWidget {
                   );
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(
-                    0xFF006130,
-                  ), // <-- WARNA HIJAU EMERALD
+                  backgroundColor: const Color(0xFF006130),
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(
