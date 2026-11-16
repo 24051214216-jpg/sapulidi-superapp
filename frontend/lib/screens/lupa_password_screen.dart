@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class LupaPasswordScreen extends StatefulWidget {
   const LupaPasswordScreen({super.key});
@@ -20,7 +21,6 @@ class _LupaPasswordScreenState extends State<LupaPasswordScreen> {
     if (_noHpController.text.isEmpty) return;
 
     setState(() => _isLoading = true);
-    // Simulasi loading
     await Future.delayed(const Duration(seconds: 2));
     setState(() => _isLoading = false);
 
@@ -40,8 +40,8 @@ class _LupaPasswordScreenState extends State<LupaPasswordScreen> {
           actions: [
             TextButton(
               onPressed: () {
-                Navigator.pop(context); // Tutup dialog
-                Navigator.pop(context); // Kembali ke login
+                Navigator.pop(context);
+                Navigator.pop(context);
               },
               child: Text(
                 'Selesai',
@@ -54,6 +54,20 @@ class _LupaPasswordScreenState extends State<LupaPasswordScreen> {
           ],
         ),
       );
+    }
+  }
+
+  Future<void> _chatRT() async {
+    final Uri url = Uri.parse(
+      'https://wa.me/6281234567890?text=Halo%20Pak%20RT,%20saya%20lupa%20password%20akun%20SapuLidi%20saya.',
+    );
+    if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
+      // PERBAIKAN: Menambahkan kurung kurawal {}
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Tidak dapat membuka WhatsApp')),
+        );
+      }
     }
   }
 
@@ -101,7 +115,6 @@ class _LupaPasswordScreenState extends State<LupaPasswordScreen> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             const SizedBox(height: 20),
-            // Ilustrasi Gembok (Sekarang Hijau)
             Container(
               width: 120,
               height: 120,
@@ -127,13 +140,12 @@ class _LupaPasswordScreenState extends State<LupaPasswordScreen> {
                     Icons.lock_outline,
                     size: 50,
                     color: primaryGreen,
-                  ), // <-- Ikon Hijau
+                  ),
                 ),
               ),
             ),
             const SizedBox(height: 30),
 
-            // Teks
             Text(
               'Atur Ulang Password',
               style: GoogleFonts.plusJakartaSans(
@@ -155,7 +167,6 @@ class _LupaPasswordScreenState extends State<LupaPasswordScreen> {
 
             const SizedBox(height: 30),
 
-            // Form Card
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
@@ -235,7 +246,6 @@ class _LupaPasswordScreenState extends State<LupaPasswordScreen> {
 
                   const SizedBox(height: 20),
 
-                  // Info Box (Sekarang Hijau Muda)
                   Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
@@ -263,14 +273,13 @@ class _LupaPasswordScreenState extends State<LupaPasswordScreen> {
 
                   const SizedBox(height: 24),
 
-                  // Tombol Hijau
                   SizedBox(
                     width: double.infinity,
                     height: 50,
                     child: ElevatedButton(
                       onPressed: _isLoading ? null : _kirimReset,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: primaryGreen, // <-- Tombol Hijau
+                        backgroundColor: primaryGreen,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(25),
                         ),
@@ -304,7 +313,6 @@ class _LupaPasswordScreenState extends State<LupaPasswordScreen> {
 
             const SizedBox(height: 30),
 
-            // Bantuan
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
@@ -340,7 +348,7 @@ class _LupaPasswordScreenState extends State<LupaPasswordScreen> {
                     ),
                   ),
                   OutlinedButton(
-                    onPressed: () {},
+                    onPressed: _chatRT,
                     style: OutlinedButton.styleFrom(
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20),

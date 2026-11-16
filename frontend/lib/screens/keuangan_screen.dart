@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart'; // Untuk Clipboard
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:url_launcher/url_launcher.dart'; // Untuk WhatsApp
 
 import '../services/api_service.dart';
 
@@ -20,7 +22,6 @@ class _KeuanganScreenState extends State<KeuanganScreen> {
   String? _error;
   String? _uploadingId;
 
-  // Palet Warna
   final Color primaryGreen = const Color(0xFF006130);
   final Color lightGreen = const Color(0xFFE8FFF0);
   final Color orange = const Color(0xFFFB7800);
@@ -57,7 +58,6 @@ class _KeuanganScreenState extends State<KeuanganScreen> {
     }
   }
 
-  // Format Rupiah
   String _formatRupiah(dynamic value) {
     final n = num.tryParse(value.toString())?.round() ?? 0;
     final s = n.toString();
@@ -81,8 +81,6 @@ class _KeuanganScreenState extends State<KeuanganScreen> {
 
   Future<void> _uploadBukti(dynamic invoice) async {
     final invoiceId = invoice['id'].toString();
-
-    // Pilih gambar
     final picked = await _picker.pickImage(
       source: ImageSource.gallery,
       imageQuality: 80,
@@ -92,18 +90,16 @@ class _KeuanganScreenState extends State<KeuanganScreen> {
     setState(() => _uploadingId = invoiceId);
 
     try {
-      // 1. Upload gambar ke server
       final url = await ApiService.uploadFoto(picked);
       if (url == null) {
         _snack('Gagal mengunggah gambar bukti', error: true);
         return;
       }
 
-      // 2. Kirim data pembayaran
       final res = await ApiService.createPayment(invoiceId, url);
       if (res['success'] == true) {
         _snack(res['message'] ?? 'Bukti bayar berhasil dikirim');
-        await _loadData(); // Refresh data
+        await _loadData();
       } else {
         _snack(res['message'] ?? 'Gagal mengirim pembayaran', error: true);
       }
@@ -153,9 +149,16 @@ class _KeuanganScreenState extends State<KeuanganScreen> {
           ),
           Padding(
             padding: const EdgeInsets.only(right: 16.0),
-            child: CircleAvatar(
-              backgroundColor: primaryGreen,
-              child: const Icon(Icons.person, color: Colors.white, size: 20),
+            // POIN 10: Logo Karakter 3D
+            child: Container(
+              width: 36,
+              height: 36,
+              decoration: const BoxDecoration(shape: BoxShape.circle),
+              clipBehavior: Clip.antiAlias,
+              child: Image.asset(
+                'assets/images/karakter_sapulidi.png',
+                fit: BoxFit.cover,
+              ),
             ),
           ),
         ],
@@ -197,7 +200,6 @@ class _KeuanganScreenState extends State<KeuanganScreen> {
     );
   }
 
-  // 1. KARTU SAMBUTAN HIJAU
   Widget _buildGreetingCard() {
     return Container(
       padding: const EdgeInsets.all(20),
@@ -254,7 +256,6 @@ class _KeuanganScreenState extends State<KeuanganScreen> {
               ],
             ),
           ),
-          // Gambar Karakter (Kotak putih kecil)
           Container(
             width: 60,
             height: 60,
@@ -277,9 +278,7 @@ class _KeuanganScreenState extends State<KeuanganScreen> {
     );
   }
 
-  // 2. KARTU TAGIHAN & RINCIAN
   Widget _buildInvoiceSection() {
-    // Cari tagihan yang belum bayar, jika tidak ada ambil yang pertama
     dynamic activeInvoice;
     if (_invoices.isNotEmpty) {
       activeInvoice = _invoices.firstWhere(
@@ -316,7 +315,6 @@ class _KeuanganScreenState extends State<KeuanganScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Header Tagihan
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -378,8 +376,6 @@ class _KeuanganScreenState extends State<KeuanganScreen> {
             ],
           ),
           const SizedBox(height: 16),
-
-          // Kotak Nominal
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
@@ -432,8 +428,6 @@ class _KeuanganScreenState extends State<KeuanganScreen> {
             ),
           ),
           const SizedBox(height: 16),
-
-          // Rincian Dummy (karena db belum punya rincian)
           _buildRincianRow(
             Icons.cleaning_services,
             'Iuran Kebersihan & Sampah',
@@ -497,9 +491,7 @@ class _KeuanganScreenState extends State<KeuanganScreen> {
     );
   }
 
-  // 3. REKENING BANK & TOMBOL UPLOAD
   Widget _buildBankSection() {
-    // Cek apakah ada tagihan yang belum dibayar
     final hasUnpaid = _invoices.any((inv) => inv['status'] == 'BELUM_BAYAR');
     final unpaidInvoice = hasUnpaid
         ? _invoices.firstWhere((inv) => inv['status'] == 'BELUM_BAYAR')
@@ -598,8 +590,12 @@ class _KeuanganScreenState extends State<KeuanganScreen> {
                       ],
                     ),
                     OutlinedButton(
+                      // POIN 11: SALIN REKENING
                       onPressed: () {
-                        _snack('Nomor rekening disalin!');
+                        Clipboard.setData(
+                          const ClipboardData(text: '1370019283741'),
+                        );
+                        _snack('Nomor rekening berhasil disalin!');
                       },
                       style: OutlinedButton.styleFrom(
                         shape: RoundedRectangleBorder(
@@ -628,7 +624,6 @@ class _KeuanganScreenState extends State<KeuanganScreen> {
           ),
         ),
         const SizedBox(height: 16),
-        // Tombol Upload Besar
         SizedBox(
           width: double.infinity,
           height: 50,
@@ -662,7 +657,6 @@ class _KeuanganScreenState extends State<KeuanganScreen> {
     );
   }
 
-  // 4. TRANSPARANSI KAS RT
   Widget _buildTransparencySection() {
     final totalMasuk = _cashData?['ringkasan']?['totalMasuk'] ?? 0;
     final totalKeluar = _cashData?['ringkasan']?['totalKeluar'] ?? 0;
@@ -823,69 +817,12 @@ class _KeuanganScreenState extends State<KeuanganScreen> {
             ],
           ),
           const SizedBox(height: 16),
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: bgColor,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Row(
-              children: [
-                // Progress Ring (Simulasi)
-                SizedBox(
-                  width: 40,
-                  height: 40,
-                  child: Stack(
-                    children: [
-                      Center(
-                        child: CircularProgressIndicator(
-                          value: 0.82,
-                          color: primaryGreen,
-                          backgroundColor: Colors.grey.shade300,
-                          strokeWidth: 4,
-                        ),
-                      ),
-                      Center(
-                        child: Icon(
-                          Icons.trending_up,
-                          size: 16,
-                          color: primaryGreen,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Kas Terkumpul 82%',
-                        style: GoogleFonts.plusJakartaSans(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 12,
-                          color: textDark,
-                        ),
-                      ),
-                      Text(
-                        '41 dari 50 KK telah melunasi',
-                        style: GoogleFonts.plusJakartaSans(
-                          fontSize: 10,
-                          color: textGrey,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 16),
           SizedBox(
             width: double.infinity,
             child: OutlinedButton.icon(
-              onPressed: () {},
+              onPressed: () {
+                _snack('Fitur PDF akan segera hadir');
+              },
               icon: const Icon(Icons.download, size: 16),
               label: Text(
                 'Unduh PDF Laporan Kas RT',
@@ -908,9 +845,7 @@ class _KeuanganScreenState extends State<KeuanganScreen> {
     );
   }
 
-  // 5. RIWAYAT PEMBAYARAN
   Widget _buildHistorySection() {
-    // Filter hanya yang LUNAS untuk riwayat
     final history = _invoices.where((inv) => inv['status'] == 'LUNAS').toList();
 
     return Column(
@@ -927,12 +862,15 @@ class _KeuanganScreenState extends State<KeuanganScreen> {
                 color: textDark,
               ),
             ),
-            Text(
-              'Lihat Semua',
-              style: GoogleFonts.plusJakartaSans(
-                fontSize: 12,
-                color: primaryGreen,
-                fontWeight: FontWeight.bold,
+            GestureDetector(
+              onTap: () => _snack('Halaman riwayat penuh segera hadir'),
+              child: Text(
+                'Lihat Semua',
+                style: GoogleFonts.plusJakartaSans(
+                  fontSize: 12,
+                  color: primaryGreen,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
           ],
@@ -1040,7 +978,6 @@ class _KeuanganScreenState extends State<KeuanganScreen> {
     );
   }
 
-  // 6. BANTUAN BANNER
   Widget _buildHelpBanner() {
     return Container(
       padding: const EdgeInsets.all(16),
@@ -1083,12 +1020,19 @@ class _KeuanganScreenState extends State<KeuanganScreen> {
                 ),
                 const SizedBox(height: 12),
                 OutlinedButton.icon(
-                  onPressed: () {},
-                  icon: Icon(
-                    Icons.chat,
-                    size: 16,
-                    color: primaryGreen,
-                  ), // <-- Perbaikan: Hapus kata 'const'
+                  // POIN 14: Buka WA
+                  onPressed: () async {
+                    final Uri url = Uri.parse(
+                      'https://wa.me/6281234567890?text=Halo%20Pak%20RT,%20saya%20butuh%20bantuan%20terkait%20iuran.',
+                    );
+                    if (!await launchUrl(
+                      url,
+                      mode: LaunchMode.externalApplication,
+                    )) {
+                      _snack('Tidak dapat membuka WhatsApp');
+                    }
+                  },
+                  icon: Icon(Icons.chat, size: 16, color: primaryGreen),
                   label: Text(
                     'Chat Pak RT',
                     style: GoogleFonts.plusJakartaSans(

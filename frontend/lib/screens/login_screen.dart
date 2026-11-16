@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../services/api_service.dart';
 import 'dashboard_screen.dart';
@@ -17,8 +18,8 @@ class _LoginScreenState extends State<LoginScreen> {
   final _noHpController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _isLoading = false;
+  bool _ingatSaya = true;
 
-  // Warna Tema
   final Color primaryGreen = const Color(0xFF006130);
   final Color lightGreen = const Color(0xFF107C41);
   final Color darkGreen = const Color(0xFF084C27);
@@ -44,6 +45,28 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
+  Future<void> _bukaWhatsApp() async {
+    final Uri url = Uri.parse(
+      'https://wa.me/6281234567890?text=Halo%20Admin%20SapuLidi,%20saya%20ingin%20bertanya.',
+    );
+    if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
+      // PERBAIKAN: Menambahkan kurung kurawal {}
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Tidak dapat membuka WhatsApp')),
+        );
+      }
+    }
+  }
+
+  void _kirimOTP() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Kode OTP telah dikirim ke WhatsApp Anda (Simulasi)'),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -51,7 +74,6 @@ class _LoginScreenState extends State<LoginScreen> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            // HEADER HIJAU (Menggantikan Orange)
             Container(
               width: double.infinity,
               padding: const EdgeInsets.fromLTRB(24, 60, 24, 40),
@@ -140,7 +162,6 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
             ),
 
-            // FORM LOGIN
             Padding(
               padding: const EdgeInsets.all(24.0),
               child: Container(
@@ -240,9 +261,13 @@ class _LoginScreenState extends State<LoginScreen> {
                         Row(
                           children: [
                             Checkbox(
-                              value: true,
-                              onChanged: (v) {},
+                              value: _ingatSaya,
                               activeColor: primaryGreen,
+                              onChanged: (val) {
+                                setState(() {
+                                  _ingatSaya = val ?? false;
+                                });
+                              },
                             ),
                             Text(
                               'Ingat Saya',
@@ -330,7 +355,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       children: [
                         Expanded(
                           child: OutlinedButton.icon(
-                            onPressed: () {},
+                            onPressed: _bukaWhatsApp,
                             icon: const Icon(Icons.chat, color: Colors.green),
                             label: Text(
                               'WhatsApp',
@@ -351,7 +376,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         const SizedBox(width: 12),
                         Expanded(
                           child: OutlinedButton.icon(
-                            onPressed: () {},
+                            onPressed: _kirimOTP,
                             icon: const Icon(
                               Icons.sms,
                               color: Color(0xFF006130),

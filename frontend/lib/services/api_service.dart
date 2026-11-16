@@ -388,4 +388,29 @@ class ApiService {
       return {'success': false, 'message': 'Koneksi gagal: $e'};
     }
   }
+
+  // --- 13. GET NOTIFICATIONS ---
+  static Future<List<dynamic>> getNotifications() async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+
+      final response = await http.get(
+        Uri.parse('$baseUrl/notifications'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        return data['data'];
+      } else {
+        throw Exception('Gagal memuat notifikasi');
+      }
+    } catch (e) {
+      throw Exception('Koneksi gagal: $e');
+    }
+  }
 }

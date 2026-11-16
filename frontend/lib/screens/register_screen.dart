@@ -94,19 +94,20 @@ class _RegisterScreenState extends State<RegisterScreen> {
           ),
         ),
         actions: [
-          Container(
-            margin: const EdgeInsets.only(right: 16),
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-            decoration: BoxDecoration(
-              color: const Color(0xFFFFDBC8),
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Text(
-              'SAPULIDI',
-              style: GoogleFonts.plusJakartaSans(
-                color: const Color(0xFF994700),
-                fontSize: 10,
-                fontWeight: FontWeight.bold,
+          Padding(
+            padding: const EdgeInsets.only(right: 16.0),
+            child: Container(
+              width: 32,
+              height: 32,
+              decoration: const BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.white,
+              ),
+              clipBehavior: Clip.antiAlias,
+              // POIN 2: Logo Karakter 3D
+              child: Image.asset(
+                'assets/images/karakter_sapulidi.png',
+                fit: BoxFit.cover,
               ),
             ),
           ),
@@ -115,7 +116,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            // Header Hijau
             Container(
               width: double.infinity,
               padding: const EdgeInsets.fromLTRB(24, 30, 24, 40),
@@ -183,7 +183,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
               ),
             ),
 
-            // Form Card
             Transform.translate(
               offset: const Offset(0, -20),
               child: Padding(
@@ -253,11 +252,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          // POIN 5: Checkbox sudah berfungsi
                           Checkbox(
                             value: _agreeTerms,
                             activeColor: primaryGreen,
-                            onChanged: (val) =>
-                                setState(() => _agreeTerms = val ?? false),
+                            onChanged: (val) {
+                              setState(() {
+                                _agreeTerms = val ?? false;
+                              });
+                            },
                           ),
                           Expanded(
                             child: Padding(
@@ -311,59 +314,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 ),
                         ),
                       ),
-
-                      const SizedBox(height: 16),
-                      Center(
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Icon(
-                              Icons.shield,
-                              size: 14,
-                              color: Color(0xFF006130),
-                            ),
-                            const SizedBox(width: 4),
-                            Text(
-                              'Data terlindungi enkripsi RT Digital SapuLidi',
-                              style: GoogleFonts.plusJakartaSans(
-                                fontSize: 10,
-                                color: Colors.grey,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
                     ],
                   ),
                 ),
-              ),
-            ),
-
-            // Link ke Login
-            Padding(
-              padding: const EdgeInsets.only(bottom: 30),
-              child: Wrap(
-                alignment: WrapAlignment.center,
-                children: [
-                  Text(
-                    'Sudah punya akun? ',
-                    style: GoogleFonts.plusJakartaSans(
-                      fontSize: 13,
-                      color: Colors.grey.shade700,
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: () => Navigator.pop(context),
-                    child: Text(
-                      'Masuk',
-                      style: GoogleFonts.plusJakartaSans(
-                        fontSize: 13,
-                        color: primaryGreen,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ],
               ),
             ),
           ],
